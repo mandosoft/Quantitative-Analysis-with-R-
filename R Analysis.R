@@ -4,7 +4,7 @@ require(RODBC)
 require(dplyr)
 require(urca)
 require(GGally)
-
+require(ggplot2)
 #Exploratory analysis between AAPL and VIX 
 
 AAPL <- getSymbols("AAPL", auto.assign = FALSE)
@@ -56,11 +56,23 @@ class(test_2013)
 
 # multiple tests and still must reject null hypothesis 
 
+qqnorm(as.numeric(aapl), main = "AAPL empirical returns", cex.main = 0.8)
+qqline(as.numeric(returns), lwd = 2)
+grid()
+
+answer <- shapiro.test(as.numeric(aapl))
+
+# Shapiro-Wilk normality test
+# 
+# data:  as.numeric(aapl)
+# W = 0.89592, p-value < 2.2e-16
+
+#assessing distrubtion
+ggplot(AAPL, aes(group ='', x=AAPL$AAPL.Adjusted, y=AAPL$AAPL.Close)) +
+  geom_boxplot(outlier.color = "black", outlier.size = 1) +
+  labs(x="Adjusted Returns", y="Close Price")
 
 
-#corr plot for visuals
-ggcorr(AAPL, VIX)
 
-View(VIX)
-candleChart(AAPL, multi.col = TRUE, theme = 'white', subset = '2017::2018')
+
 
