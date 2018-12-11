@@ -1,1 +1,3 @@
-Commit check 
+require(quantmod)
+require(RODBC)
+require(dplyr)
