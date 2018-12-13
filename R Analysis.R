@@ -5,14 +5,34 @@ require(dplyr)
 require(urca)
 require(GGally)
 require(ggplot2)
-#Exploratory analysis between AAPL and VIX 
+require(quantstrat)
+#Exploratory analysis between AAPL and VXX 
 
-AAPL <- getSymbols("AAPL", auto.assign = FALSE)
-VIX <- getSymbols("VIX", auto.assign = FALSE)
+AAPL <- getSymbols("AAPL", from = '2017-01-01', to = '2018-01-01', adjust = T, auto.assign = FALSE)
+VXX <- getSymbols("VXX", from = '2017-01-01', to = '2018-01-01', adjust = T, auto.assign = FALSE)
 
+ 
+prices <- cbind(AAPL[,6], VXX [,6])
+price_changes <- apply(prices,2 , diff)
+
+# observations on 
+plot(price_changes[, 1], price_changes[, 2],
+     xlab = "VXX Price Changes",
+     ylab = "AAPL Price Changes", 
+     main = "AAPL vs. VXX",
+     cex.main = 0.8,
+     cex.lab = 0.8,
+     cex.axis = 0.8)
+grid()
+
+ans <- lm(price_changes[,2] ~ price_changes[,1])
+beta <- ans$coefficents[2]
+
+beta
 
 prices1 <- AAPL$AAPL.Close
 aapl <- AAPL$AAPL.Adjusted
+vxx <- VXX$VXX.Adjusted
 
 #compute log prices to analyze stationarity 
 returns1 <- diff(log(prices1))
@@ -72,7 +92,7 @@ ggplot(AAPL, aes(group ='', x=AAPL$AAPL.Adjusted, y=AAPL$AAPL.Close)) +
   geom_boxplot(outlier.color = "black", outlier.size = 1) +
   labs(x="Adjusted Returns", y="Close Price")
 
-
+reg <- lm(VXX.Close ~ AAPL.Close, data = sv)
 
 
 
